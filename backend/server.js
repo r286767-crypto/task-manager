@@ -1,11 +1,13 @@
 console.log("SERVER RUNNING CLEAN");
-const cors = require("cors");
-app.use(cors());
+
 const express = require("express");
+
+const cors = require("cors");
+
 const mongoose = require("mongoose");
 const app = express();
 
-
+app.use(cors());
 
 app.use(express.json());
 mongoose.connect("mongodb+srv://r286767_db_user:r7760340301@cluster0.1wt6wfc.mongodb.net/?retryWrites=true&w=majority")
