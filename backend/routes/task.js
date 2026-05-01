@@ -8,10 +8,11 @@ const adminMiddleware = require("../middleware/adminMiddleware");
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const task = new Task({
+       user: req.user.id,
       title: req.body.title,
-  user: req.user.id,
+ 
   
-  projectId: req.body.projectId // 👈 ADD THIS LINE
+ 
 });
     const savedTask = await task.save();
     res.json(savedTask);

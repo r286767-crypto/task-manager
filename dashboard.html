@@ -6,7 +6,9 @@
 <body>
 
 <h2>Welcome to Dashboard 🎉</h2>
-<input id="taskInput" placeholder="Enter task">
+<input type="text" id="taskInput" placeholder="Enter task">
+
+
 <button onclick="addTask()">Add Task</button>
 
 <button onclick="loadTasks()">Load Tasks</button>
@@ -15,42 +17,32 @@
 <ul id="taskList"></ul>
 
 <script>
-
-async function loadTasks() {
+async function addTask() {
   const token = localStorage.getItem("token");
-
+  const title = document.getElementById("taskInput").value;
   try {
     const res = await fetch("https://task-manager-production-8873.up.railway.app/tasks", {
-      method: "GET",
+      method: "POST",
       headers: {
+        "Content-Type": "application/json",
         "Authorization": "Bearer " + token
-      }
+      },
+      body: JSON.stringify({ title })
     });
 
     const data = await res.json();
 
-    console.log("Tasks:", data); // 👈 check this
-
-    const taskDiv = document.getElementById("tasks");
-    taskDiv.innerHTML = "";
-
-    if (data.length === 0) {
-      taskDiv.innerHTML = "No tasks found 😅";
-      return;
+    if (res.ok) {
+      alert("Task added ✅");
+    } else {
+      alert(data);
     }
-
-    data.forEach(task => {
-      const p = document.createElement("p");
-      p.innerText = task.title + (task.completed ? " ✅" : " ❌");
-      taskDiv.appendChild(p);
-    });
 
   } catch (err) {
     console.log(err);
-    alert("Error loading tasks ❌");
+    alert("Error adding task ❌");
   }
 }
-
 </script>
 </body>
 </html>
