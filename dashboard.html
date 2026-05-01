@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+</head>
+<body>
+
+<h2>Welcome to Dashboard 🎉</h2>
+<input id="taskInput" placeholder="Enter task">
+<button onclick="addTask()">Add Task</button>
+
+<button onclick="loadTasks()">Load Tasks</button>
+<div id="tasks"></div>
+
+<ul id="taskList"></ul>
+
+<script>
+
+async function loadTasks() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch("https://task-manager-production-8873.up.railway.app/tasks", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    const data = await res.json();
+
+    console.log("Tasks:", data); // 👈 check this
+
+    const taskDiv = document.getElementById("tasks");
+    taskDiv.innerHTML = "";
+
+    if (data.length === 0) {
+      taskDiv.innerHTML = "No tasks found 😅";
+      return;
+    }
+
+    data.forEach(task => {
+      const p = document.createElement("p");
+      p.innerText = task.title + (task.completed ? " ✅" : " ❌");
+      taskDiv.appendChild(p);
+    });
+
+  } catch (err) {
+    console.log(err);
+    alert("Error loading tasks ❌");
+  }
+}
+
+</script>
+</body>
+</html>

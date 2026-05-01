@@ -8,8 +8,9 @@ const adminMiddleware = require("../middleware/adminMiddleware");
 router.post("/", authMiddleware, async (req, res) => {
   try {
     const task = new Task({
-  userId: req.user.id,
-  title: req.body.title,
+      title: req.body.title,
+  user: req.user.id,
+  
   projectId: req.body.projectId // 👈 ADD THIS LINE
 });
     const savedTask = await task.save();
@@ -24,7 +25,7 @@ router.post("/", authMiddleware, async (req, res) => {
 // ✅ GET ALL TASKS (only user’s tasks)
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const tasks = await Task.find({ userId: req.user.id });
+    const tasks = await Task.find({ user: req.user.id});
     res.json(tasks);
   } catch (err) {
     res.status(500).json("Error");
