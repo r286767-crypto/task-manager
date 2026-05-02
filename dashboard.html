@@ -17,11 +17,19 @@
 <ul id="taskList"></ul>
 
 <script>
+const API_URL = "https://task-manager-production-8873.up.railway.app/tasks";
+
 async function addTask() {
   const token = localStorage.getItem("token");
   const title = document.getElementById("taskInput").value;
+
+  if (!title) {
+    alert("Enter a task");
+    return;
+  }
+
   try {
-    const res = await fetch("https://task-manager-production-8873.up.railway.app/tasks", {
+    const res = await fetch(API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,6 +42,7 @@ async function addTask() {
 
     if (res.ok) {
       alert("Task added ✅");
+      loadTasks(); // 🔥 IMPORTANT
     } else {
       alert(data);
     }
@@ -41,6 +50,33 @@ async function addTask() {
   } catch (err) {
     console.log(err);
     alert("Error adding task ❌");
+  }
+}
+
+async function loadTasks() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(API_URL, {
+      headers: {
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    const data = await res.json();
+
+    const taskDiv = document.getElementById("tasks");
+    taskDiv.innerHTML = "";
+
+    data.forEach(task => {
+      const p = document.createElement("p");
+      p.innerText = task.title;
+      taskDiv.appendChild(p);
+    });
+
+  } catch (err) {
+    console.log(err);
+    alert("Error loading tasks ❌");
   }
 }
 </script>

@@ -7,18 +7,18 @@ const adminMiddleware = require("../middleware/adminMiddleware");
 // ✅ CREATE TASK
 router.post("/", authMiddleware, async (req, res) => {
   try {
+    console.log("USER:", req.user); // debug
+
     const task = new Task({
-       user: req.user.id,
-      title: req.body.title,
- 
-  
- 
-});
+      user: req.user.id || req.user._id, // ✅ FIXED
+      title: req.body.title
+    });
+
     const savedTask = await task.save();
     res.json(savedTask);
   } catch (err) {
-    console.log(err); 
-    res.status(500).json("Error");
+    console.log(err);
+    res.status(500).json("Error creating task");
   }
 });
 
@@ -26,10 +26,13 @@ router.post("/", authMiddleware, async (req, res) => {
 // ✅ GET ALL TASKS (only user’s tasks)
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user.id});
+    const userId = req.user.id || req.user._id;
+
+    const tasks = await Task.find({ user: userId });
     res.json(tasks);
   } catch (err) {
-    res.status(500).json("Error");
+    console.log(err);
+    res.status(500).json("Error fetching tasks");
   }
 });
 
